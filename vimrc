@@ -12,6 +12,7 @@ if has('nvim')
   Plug 'roxma/ncm-rct-complete'
   Plug 'roxma/nvim-cm-tern', {'do': 'npm install'}
   " Neovim completion manager
+  let g:endwise_no_mappings = 1
   imap <C-X><CR>   <CR><Plug>AlwaysEnd
   imap <expr> <CR> (pumvisible() ? "\<C-Y>\<CR>\<Plug>DiscretionaryEnd" : "\<CR>\<Plug>DiscretionaryEnd")
 endif
@@ -49,9 +50,7 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'slim-template/vim-slim'
 Plug 'tpope/vim-rails'
 Plug 'pangloss/vim-javascript'
-" Plug 'mxw/vim-jsx'
-Plug 'lpender/vim-jsx'
-Plug 'mattn/emmet-vim'
+Plug 'mxw/vim-jsx'
 
 " Text object
 Plug 'kana/vim-textobj-function'
@@ -70,25 +69,30 @@ Plug 'mhinz/vim-grepper'
 Plug 'tpope/vim-surround'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'easymotion/vim-easymotion'
+Plug 'mhinz/vim-sayonara'
 Plug 'junegunn/vim-easy-align'
 Plug 'Konfekt/FastFold'
 Plug 'AndrewRadev/linediff.vim'
 Plug 'ckarnell/history-traverse'
 Plug 'terryma/vim-multiple-cursors'
-Plug 'mhinz/vim-sayonara'
+
+
 call plug#end()
 
 " OS Specific commands
 let g:os = substitute(system('uname'), '\n', '', '')
-let g:os = substitute(system('uname'), '\n', '', '')
 
 " Set python path
 if g:os == "Darwin"
-let g:python_host_prog  = '/usr/local/bin/python'
-let g:python3_host_prog = '/usr/local/bin/python3'
+  let g:python_host_prog  = '/usr/local/bin/python'
+  let g:python3_host_prog = '/usr/local/bin/python3'
+  nnoremap <leader>cfp :!echo "%" \| pbcopy<CR><CR>
+  nnoremap <leader>cfP :!echo "%:p" \| pbcopy<CR><CR>
 elseif g:os == "Linux"
-let g:python_host_prog  = '/usr/bin/python'
-let g:python3_host_prog = '/usr/bin/python3'
+  let g:python_host_prog  = '/usr/bin/python'
+  let g:python3_host_prog = '/usr/bin/python3'
+  nnoremap <leader>cfp :let @+ = expand("%")<CR>
+  nnoremap <leader>cfP :let @+ = expand("%:p")<CR>
 endif
 
 let g:mapleader      = ' '
@@ -164,7 +168,7 @@ set directory=~/.tmp " Where to put swap files
 "" Tags
 ""
 
-set tags=./tags,tags;
+set tags=./tags,tags;/
 
 
 ""
@@ -231,8 +235,6 @@ inoremap <silent> <C-S>         <C-O>:update<CR>
 
 " Copy file path easily for unit testing
 set clipboard=unnamedplus
-map <leader>cfp :!echo "%" \| pbcopy<CR><CR>
-map <leader>cfP :!echo "%:p" \| pbcopy<CR><CR>
 
 " Remove highlight
 map <leader>nh :nohlsearch<CR>
@@ -489,9 +491,3 @@ endif
 
 nnoremap H :HisTravBack<CR>
 nnoremap L :HisTravForward<CR>
-
-let g:user_emmet_settings = {
-  \  'javascript.jsx' : {
-    \      'extends' : 'jsx',
-    \  },
-  \}
