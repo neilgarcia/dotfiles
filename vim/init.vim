@@ -18,7 +18,6 @@ if has('nvim')
 endif
 
 " Autocomplete
-Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'neilgarcia/vim-react-snippets'
 Plug 'othree/csscomplete.vim'
@@ -63,7 +62,6 @@ Plug 'wellle/targets.vim'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/tpope-vim-abolish'
 Plug 'tpope/vim-commentary'
-Plug 'mhinz/vim-startify'
 Plug 'tpope/vim-endwise'
 Plug 'mhinz/vim-grepper'
 Plug 'tpope/vim-surround'
@@ -75,8 +73,7 @@ Plug 'Konfekt/FastFold'
 Plug 'AndrewRadev/linediff.vim'
 Plug 'ckarnell/history-traverse'
 Plug 'terryma/vim-multiple-cursors'
-
-
+Plug 'mattn/emmet-vim'
 call plug#end()
 
 " OS Specific commands
@@ -86,11 +83,13 @@ let g:os = substitute(system('uname'), '\n', '', '')
 if g:os == "Darwin"
   let g:python_host_prog  = '/usr/local/bin/python'
   let g:python3_host_prog = '/usr/local/bin/python3'
+
   nnoremap <leader>cfp :!echo "%" \| pbcopy<CR><CR>
   nnoremap <leader>cfP :!echo "%:p" \| pbcopy<CR><CR>
 elseif g:os == "Linux"
   let g:python_host_prog  = '/usr/bin/python'
   let g:python3_host_prog = '/usr/bin/python3'
+
   nnoremap <leader>cfp :let @+ = expand("%")<CR>
   nnoremap <leader>cfP :let @+ = expand("%:p")<CR>
 endif
@@ -183,7 +182,6 @@ augroup autocommands
   autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
   " autocmd BufNewFile,BufRead *.jsx set filetype=javascript
   autocmd BufNewFile,BufRead *.js  set filetype=javascript.jsx
-  autocmd FocusGained,BufEnter * :silent! !
   autocmd FileType qf noremap <Esc> :cclose<CR>
 augroup END
 
@@ -483,7 +481,6 @@ if has('nvim')
     tnoremap <leader><esc> <esc>
     " nnoremap <bs> <c-w>h
     let g:terminal_scrollback_buffer_size = 10000
-    let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
     set inccommand=nosplit
 else
     set encoding=utf-8
@@ -491,3 +488,9 @@ endif
 
 nnoremap H :HisTravBack<CR>
 nnoremap L :HisTravForward<CR>
+
+let g:user_emmet_settings = {
+  \  'javascript.jsx' : {
+    \      'extends' : 'jsx',
+    \  },
+  \}
