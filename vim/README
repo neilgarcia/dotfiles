@@ -1,0 +1,25 @@
+Installation
+
+  git clone git://github.com/neilpeter08/dotvim.git ~/.vim
+
+Create Symlinks
+	
+  ln -s ~/.vim/vimrc ~/.vimrc
+  ln -s ~/.vim/gvimrc ~/.gvimrc
+
+Install Silver Searcher
+
+  apt-get install silversearcher-ag
+
+Install Ack
+        
+  sudo apt-get install ack-grep 
+
+Install Ctags
+
+  1. sudo apt-get install exuberant-ctags
+  2. ctags -R .
+  
+
+" Generate jsx tags, I can use find but prefers https://github.com/sharkdp/fd
+fd ".*\.jsx$" -t f -E "./node_modules/*" --exec jsctags {} -f \; | sed '/^$/d' | sort > tags
