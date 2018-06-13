@@ -1,5 +1,5 @@
 " Find imported path
-setlocal path=.,src,node_nodules,app/client
+setlocal path=.,node_nodules,app/assets/webpack/**3
 setlocal suffixesadd=.js,.jsx,.scss
 setlocal tags=./jstags/tags;
 

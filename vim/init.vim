@@ -8,19 +8,21 @@ Plug 'joshdick/onedark.vim'
 
 " Auto completion
 if has('nvim')
-  Plug 'roxma/nvim-completion-manager', {'do': 'npm install'}
-  Plug 'roxma/ncm-rct-complete'
-  Plug 'roxma/nvim-cm-tern', {'do': 'npm install'}
-  " Neovim completion manager
-  let g:endwise_no_mappings = 1
-  imap <C-X><CR>   <CR><Plug>AlwaysEnd
-  imap <expr> <CR> (pumvisible() ? "\<C-Y>\<CR>\<Plug>DiscretionaryEnd" : "\<CR>\<Plug>DiscretionaryEnd")
+  " Plug 'roxma/nvim-completion-manager', {'do': 'npm install'}
+  " Plug 'roxma/ncm-rct-complete'
+  " Plug 'roxma/nvim-cm-tern', {'do': 'npm install'}
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'SirVer/ultisnips'
+  " " Neovim completion manager
+  " let g:endwise_no_mappings = 1
+  " imap <C-X><CR>   <CR><Plug>AlwaysEnd
+  " imap <expr> <CR> (pumvisible() ? "\<C-Y>\<CR>\<Plug>DiscretionaryEnd" : "\<CR>\<Plug>DiscretionaryEnd")
 endif
 
 " Autocomplete
-Plug 'honza/vim-snippets'
+" Plug 'honza/vim-snippets'
 Plug 'neilgarcia/vim-react-snippets'
-Plug 'othree/csscomplete.vim'
+" Plug 'othree/csscomplete.vim'
 
 " FZF
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -43,15 +45,14 @@ Plug 'w0rp/ale'
 " Git
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/gv.vim'
-
-"Language specific
+"
+""Language specific
 Plug 'vim-ruby/vim-ruby'
 Plug 'slim-template/vim-slim'
-Plug 'tpope/vim-rails'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
-
-" Text object
+"
+"" Text object
 Plug 'kana/vim-textobj-function'
 Plug 'thinca/vim-textobj-function-javascript'
 Plug 'kana/vim-textobj-user'
@@ -76,43 +77,25 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'mattn/emmet-vim'
 call plug#end()
 
-" OS Specific commands
-let g:os = substitute(system('uname'), '\n', '', '')
-
-" Set python path
-if g:os == "Darwin"
-  let g:python_host_prog  = '/usr/local/bin/python'
-  let g:python3_host_prog = '/usr/local/bin/python3'
-
-  nnoremap <leader>cfp :!echo "%" \| pbcopy<CR><CR>
-  nnoremap <leader>cfP :!echo "%:p" \| pbcopy<CR><CR>
-elseif g:os == "Linux"
-  let g:python_host_prog  = '/usr/bin/python'
-  let g:python3_host_prog = '/usr/bin/python3'
-
-  nnoremap <leader>cfp :let @+ = expand("%")<CR>
-  nnoremap <leader>cfP :let @+ = expand("%:p")<CR>
-endif
-
 let g:mapleader      = ' '
 let g:maplocalleader = ' '
 noremap , <Space>
 
 syntax on
-filetype plugin indent on
-
+filetype plugin indent on 
 " Edit and source vimrc
 map <leader>vr :tabedit $MYVIMRC<CR>
 map <leader>so :source $MYVIMRC<CR>
 
 
 " Basic Configs
+set re=1
 set hidden
 set number            " Show line number
-set relativenumber
 set ruler
-set cursorline
-set cursorcolumn
+" set cursorline
+" set cursorcolumn
+set lazyredraw
 set autoread
 set timeoutlen=500    " Dont wait too long for the next key press (useful for ambigous leader commands)
 
@@ -150,7 +133,7 @@ set listchars+=precedes:<         " The character to show in the last column whe
 "" Searching
 ""
 
-set hlsearch    " highlight matches
+set nohlsearch    " highlight matches
 set incsearch   " incremental searching
 set ignorecase  " searches are case insensitive...
 set smartcase   " ... unless they contain at least one capital letter
@@ -181,8 +164,9 @@ augroup autocommands
   autocmd BufWinEnter * if empty(expand('<afile>'))|call fugitive#detect(getcwd())|endif
   autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
   " autocmd BufNewFile,BufRead *.jsx set filetype=javascript
-  autocmd BufNewFile,BufRead *.js  set filetype=javascript.jsx
+  " autocmd BufNewFile,BufRead *.js  set filetype=javascript.jsx
   autocmd FileType qf noremap <Esc> :cclose<CR>
+  autocmd FocusGained,BufEnter * :checktime
 augroup END
 
 ""
@@ -257,7 +241,8 @@ endif
 
 set background=dark           " Enable dark background
 colorscheme onedark "Set the colorscheme
-syntax sync minlines=200
+set synmaxcol=128
+syntax sync minlines=256
 set foldmethod=manual
 
 
@@ -270,7 +255,10 @@ fun! s:git_root()
 	return fnamemodify(substitute(l:path, '.git', '', ''), ':p:h')
 endfun
 
-
+" " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+" let g:UltiSnipsExpandTrigger="<tab>"
+" let g:UltiSnipsJumpForwardTrigger="<c-b>"
+" let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 " Grepper
 runtime plugin/grepper.vim
@@ -342,20 +330,20 @@ function! GStatusTabDiff()
   Gvdiff
 endfunction
 
-" startify
-let g:startify_change_to_dir = 0
-let g:startify_change_to_vcs_root = 1
-let g:startify_session_dir = '~/.vim/sessions'
-let g:startify_session_persistence = 1
-let g:startify_relative_path = 1
-let g:startify_list_order = [
-      \ ['   Sessions:'],
-      \ 'sessions',
-      \ ['   Recent files:'],
-      \ 'files',
-      \ ['   Recent files in current directory:'],
-      \ 'dir',
-      \ ]
+" " startify
+" let g:startify_change_to_dir = 0
+" let g:startify_change_to_vcs_root = 1
+" let g:startify_session_dir = '~/.vim/sessions'
+" let g:startify_session_persistence = 1
+" let g:startify_relative_path = 1
+" let g:startify_list_order = [
+"       \ ['   Sessions:'],
+"       \ 'sessions',
+"       \ ['   Recent files:'],
+"       \ 'files',
+"       \ ['   Recent files in current directory:'],
+"       \ 'dir',
+"       \ ]
 
 " Ripgrep
 " --files: List files that would be searched but do not search
@@ -391,7 +379,7 @@ if has('nvim')
 endif
 
 " Deoplete
-let g:deoplete#enable_at_startup = 0
+let g:deoplete#enable_at_startup = 1
 
 " Better whitespace
 
@@ -457,7 +445,6 @@ set statusline+=%#LineNr#
 set statusline+=\ %f
 set statusline+=%m
 set statusline+=%=
-set statusline+=%#CursorColumn#
 set statusline+=\ %y
 set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
 set statusline+=\[%{&fileformat}\]
@@ -467,7 +454,6 @@ set statusline+=\
 
 if has('nvim')
     " Sane terminal bindings
-    tnoremap <Esc> <C-\><C-n>
     tnoremap <leader><esc> <esc>
     " nnoremap <bs> <c-w>h
     let g:terminal_scrollback_buffer_size = 10000
@@ -484,3 +470,22 @@ let g:user_emmet_settings = {
     \      'extends' : 'jsx',
     \  },
   \}
+
+" OS Specific commands
+let g:os = substitute(system('uname'), '\n', '', '')
+
+" Set python path
+if g:os == "Darwin"
+  let g:python_host_prog  = '/usr/local/bin/python'
+  let g:python3_host_prog = '/usr/local/bin/python3'
+
+  nnoremap <leader>cfp :!echo "%" \| pbcopy<CR><CR>
+  nnoremap <leader>cfP :!echo "%:p" \| pbcopy<CR><CR>
+elseif g:os == "Linux"
+  let g:python_host_prog  = '/usr/bin/python'
+  let g:python3_host_prog = '/usr/bin/python3'
+
+  nnoremap <leader>cfp :let @+ = expand("%")<CR>
+  nnoremap <leader>cfP :let @+ = expand("%:p")<CR>
+endif
+
