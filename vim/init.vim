@@ -5,18 +5,22 @@ scriptencoding utf-8
 " Get object name for syntax highlighting
 " echom synIDattr(synID(line('.'),col('.'),0),'name')
 Plug 'joshdick/onedark.vim'
+Plug 'morhetz/gruvbox'
 
 " Auto completion
 if has('nvim')
-  " Plug 'roxma/nvim-completion-manager', {'do': 'npm install'}
-  " Plug 'roxma/ncm-rct-complete'
-  " Plug 'roxma/nvim-cm-tern', {'do': 'npm install'}
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'ncm2/ncm2'
+  " ncm2 requires nvim-yarp
+  Plug 'roxma/nvim-yarp'
+
+  " Completion
+  Plug 'ncm2/ncm2-tmux'
+  Plug 'ncm2/ncm2-path'
+  Plug 'ncm2/ncm2-ultisnips'
   Plug 'SirVer/ultisnips'
-  " " Neovim completion manager
-  " let g:endwise_no_mappings = 1
-  " imap <C-X><CR>   <CR><Plug>AlwaysEnd
-  " imap <expr> <CR> (pumvisible() ? "\<C-Y>\<CR>\<Plug>DiscretionaryEnd" : "\<CR>\<Plug>DiscretionaryEnd")
+  Plug 'ncm2/ncm2-bufword'
+  " Snippets are separated from the engine. Add this if you want them:
+  Plug 'honza/vim-snippets'
 endif
 
 " Autocomplete
@@ -66,7 +70,6 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-endwise'
 Plug 'mhinz/vim-grepper'
 Plug 'tpope/vim-surround'
-Plug 'ntpeters/vim-better-whitespace'
 Plug 'easymotion/vim-easymotion'
 Plug 'mhinz/vim-sayonara'
 Plug 'junegunn/vim-easy-align'
@@ -82,7 +85,7 @@ let g:maplocalleader = ' '
 noremap , <Space>
 
 syntax on
-filetype plugin indent on 
+filetype plugin indent on
 " Edit and source vimrc
 map <leader>vr :tabedit $MYVIMRC<CR>
 map <leader>so :source $MYVIMRC<CR>
@@ -158,15 +161,18 @@ set tags=./tags,tags;/
 ""
 augroup autocommands
   autocmd!
-  " autocmd BufEnter * EnableStripWhitespaceOnSave " strip whitespace on save
+  autocmd BufWritePost * :%s/\s\+$//e " strip whitespace on save
   autocmd! FileType fzf tnoremap <buffer> <Esc> <c-c>
   autocmd FileType gitcommit noremap <buffer> d :call GStatusTabDiff()<CR>
   autocmd BufWinEnter * if empty(expand('<afile>'))|call fugitive#detect(getcwd())|endif
   autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
   " autocmd BufNewFile,BufRead *.jsx set filetype=javascript
   " autocmd BufNewFile,BufRead *.js  set filetype=javascript.jsx
-  autocmd FileType qf noremap <Esc> :cclose<CR>
+  autocmd FileType qf noremap q :cclose<CR>
   autocmd FocusGained,BufEnter * :checktime
+
+  " enable ncm2 for all buffer
+  autocmd BufEnter * call ncm2#enable_for_buffer()
 augroup END
 
 ""
@@ -192,7 +198,7 @@ ca qt tabclose
 "nnoremap <C-]> g<C-]>
 
 " Redo
-map U :redo<CR>
+nnoremap U :redo<CR>
 
 " Make Y behave like other capitals
 nnoremap Y y$
@@ -241,10 +247,8 @@ endif
 
 set background=dark           " Enable dark background
 colorscheme onedark "Set the colorscheme
-set synmaxcol=128
 syntax sync minlines=256
 set foldmethod=manual
-
 
 ""
 "" Plugins
@@ -255,10 +259,21 @@ fun! s:git_root()
 	return fnamemodify(substitute(l:path, '.git', '', ''), ':p:h')
 endfun
 
-" " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-" let g:UltiSnipsExpandTrigger="<tab>"
-" let g:UltiSnipsJumpForwardTrigger="<c-b>"
-" let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+" nvim completion
+
+set completeopt=noinsert,menuone,noselect
+set shortmess+=c
+
+" ncm2
+let g:endwise_no_mappings = 1 " Conflict
+imap <C-X><CR>   <CR><Plug>AlwaysEnd
+imap <expr> <CR> (pumvisible() ? "\<C-Y>\<CR>\<Plug>DiscretionaryEnd" : "\<CR>\<Plug>DiscretionaryEnd")
+
+" c-j c-k for moving in snippet
+let g:UltiSnipsRemoveSelectModeMappings = 0   " assuming your using vim-plug: https://github.com/junegunn/vim-plug
+let g:UltiSnipsExpandTrigger = '<Tab>'
+let g:UltiSnipsJumpForwardTrigger='<Tab>'
+let g:UltiSnipsJumpBackwardTrigger='<S-Tab>'
 
 " Grepper
 runtime plugin/grepper.vim
@@ -356,7 +371,7 @@ endfunction
 " --type file: only list files as result
 " --no-ignore: do not ignore .gitignore
 " --exclude: manually exclude folders
-let $FZF_DEFAULT_COMMAND = "fd . --type file --hidden --no-ignore --exclude '{.git,doc*/,node_modules,vendor,build,tmp,*.sty}'"
+let $FZF_DEFAULT_COMMAND = "fd . --type file --hidden --no-ignore --exclude '{.git,doc*/,**/node_modules,vendor,build,tmp,*.sty}'"
 
 let g:fzf_buffers_jump = 1  " [Buffers] Jump to the existing window if possible
 
@@ -377,11 +392,6 @@ if has('nvim')
   " ain't nobody got time for that
   tnoremap <Esc> <C-\><C-n>
 endif
-
-" Deoplete
-let g:deoplete#enable_at_startup = 1
-
-" Better whitespace
 
 " Merginal
 noremap <leader>m :Merginal<CR>
@@ -409,7 +419,11 @@ let g:ale_lint_on_enter = 0
 
 let g:ale_linters = {
 \  'jsx':        ['eslint'],
-\  'javascript': ['eslint']
+\  'javascript': ['eslint'],
+\  'ruby':       ['rubocop']
+\}
+let g:ale_fixers = {
+\  'ruby': ['rubocop']
 \}
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '!'

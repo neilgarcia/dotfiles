@@ -1,7 +1,6 @@
 " Find imported path
-setlocal path=.,node_nodules,app/assets/webpack/**3
+setlocal path=.,node_nodules,app/assets/webpack
 setlocal suffixesadd=.js,.jsx,.scss
-setlocal tags=./jstags/tags;
 
 function! LoadMainNodeModule(fname)
     let nodeModules = "./node_modules/"
