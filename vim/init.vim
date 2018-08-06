@@ -13,20 +13,18 @@ if has('nvim')
   " ncm2 requires nvim-yarp
   Plug 'roxma/nvim-yarp'
 
-  " Completion
+  " " Completion
   Plug 'ncm2/ncm2-tmux'
   Plug 'ncm2/ncm2-path'
+  Plug 'ncm2/ncm2-tern',  {'do': 'npm install'}
+  Plug 'ncm2/ncm2-tagprefix'
   Plug 'ncm2/ncm2-ultisnips'
   Plug 'SirVer/ultisnips'
   Plug 'ncm2/ncm2-bufword'
   " Snippets are separated from the engine. Add this if you want them:
   Plug 'honza/vim-snippets'
+  Plug 'neilgarcia/vim-react-snippets'
 endif
-
-" Autocomplete
-" Plug 'honza/vim-snippets'
-Plug 'neilgarcia/vim-react-snippets'
-" Plug 'othree/csscomplete.vim'
 
 " FZF
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -52,7 +50,6 @@ Plug 'junegunn/gv.vim'
 "
 ""Language specific
 Plug 'vim-ruby/vim-ruby'
-Plug 'slim-template/vim-slim'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 "
@@ -77,7 +74,6 @@ Plug 'Konfekt/FastFold'
 Plug 'AndrewRadev/linediff.vim'
 Plug 'ckarnell/history-traverse'
 Plug 'terryma/vim-multiple-cursors'
-Plug 'mattn/emmet-vim'
 call plug#end()
 
 let g:mapleader      = ' '
@@ -163,13 +159,13 @@ augroup autocommands
   autocmd!
   autocmd BufWritePost * :%s/\s\+$//e " strip whitespace on save
   autocmd! FileType fzf tnoremap <buffer> <Esc> <c-c>
-  autocmd FileType gitcommit noremap <buffer> d :call GStatusTabDiff()<CR>
+  autocmd FileType gitcommit nnoremap <buffer> d :call GStatusTabDiff()<CR>
   autocmd BufWinEnter * if empty(expand('<afile>'))|call fugitive#detect(getcwd())|endif
   autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
   " autocmd BufNewFile,BufRead *.jsx set filetype=javascript
   " autocmd BufNewFile,BufRead *.js  set filetype=javascript.jsx
-  autocmd FileType qf noremap q :cclose<CR>
   autocmd FocusGained,BufEnter * :checktime
+  autocmd FileType qf nnoremap <buffer> <Esc> :cclose<CR>
 
   " enable ncm2 for all buffer
   autocmd BufEnter * call ncm2#enable_for_buffer()
@@ -181,15 +177,6 @@ augroup END
 
 " bind : to ;
 nnoremap ; :
-
-" Circular windows navigation
-nnoremap <tab>   <c-w>w
-nnoremap <S-tab> <c-w>W
-
-if (exists('+colorcolumn'))
-set colorcolumn=80
-highlight ColorColumn ctermbg=1
-endif
 
 " Close tab
 ca qt tabclose
@@ -215,6 +202,14 @@ noremap <C-J> <C-W><C-J>
 noremap <C-K> <C-W><C-K>
 noremap <C-L> <C-W><C-L>
 noremap <C-H> <C-W><C-H>
+
+" Better jumps
+nnoremap }   }zz
+nnoremap {   {zz
+nnoremap ]]  ]]zz
+nnoremap [[  [[zz
+nnoremap []  []zz
+nnoremap ][  ][zz
 
 " Maps save to Ctrl S
 noremap <silent> <C-S>          :update<CR>
@@ -265,7 +260,11 @@ set completeopt=noinsert,menuone,noselect
 set shortmess+=c
 
 " ncm2
+let g:ncm2#popup_delay = 10
 let g:endwise_no_mappings = 1 " Conflict
+let g:ncm2#matcher = 'abbrfuzzy'
+let g:ncm2#sorter = 'abbrfuzzy'
+
 imap <C-X><CR>   <CR><Plug>AlwaysEnd
 imap <expr> <CR> (pumvisible() ? "\<C-Y>\<CR>\<Plug>DiscretionaryEnd" : "\<CR>\<Plug>DiscretionaryEnd")
 
@@ -283,7 +282,7 @@ let g:grepper.open = 1
 let g:grepper.tools =
   \ ['rg', 'git', 'grep']
 
-let g:grepper.rg.grepprg .= ' --type-add slim:*.slim --type-add haml:*.haml -g "!{.git,node_modules,vendor,build,tmp,yarn.lock,*.sty}/*"'
+let g:grepper.rg.grepprg .= " --type-add 'slim:*.slim' --type-add 'haml:*.haml' -g '!{.git,node_modules,vendor,build,tmp,yarn.lock,*.sty}/*'"
 
 map <leader>a :GrepperRg<Space>
 
@@ -479,16 +478,10 @@ endif
 nnoremap H :HisTravBack<CR>
 nnoremap L :HisTravForward<CR>
 
-let g:user_emmet_settings = {
-  \  'javascript.jsx' : {
-    \      'extends' : 'jsx',
-    \  },
-  \}
-
 " OS Specific commands
 let g:os = substitute(system('uname'), '\n', '', '')
 
-" Set python path
+" Set python path/clipboard
 if g:os == "Darwin"
   let g:python_host_prog  = '/usr/local/bin/python'
   let g:python3_host_prog = '/usr/local/bin/python3'
