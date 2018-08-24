@@ -49,6 +49,8 @@ Plug 'tpope/vim-fugitive'
 Plug 'junegunn/gv.vim'
 "
 ""Language specific
+Plug 'tpope/gem-ctags'
+Plug 'tpope/vim-bundler'
 Plug 'vim-ruby/vim-ruby'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
@@ -151,6 +153,26 @@ set directory=~/.tmp " Where to put swap files
 
 set tags=./tags,tags;/
 
+""
+"" Status Line
+""
+
+set laststatus=2
+set guioptions-=e
+set statusline=
+set statusline+=%#PmenuSel#
+set statusline+=%{StatuslineGit()}
+set statusline+=%#LineNr#
+set statusline+=\ %f
+set statusline+=%m
+set statusline+=%=
+set statusline+=\ %y
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\[%{&fileformat}\]
+set statusline+=\ %p%%
+set statusline+=\ %l:%c
+set statusline+=\
+
 
 ""
 "" Au Group
@@ -180,9 +202,6 @@ nnoremap ; :
 
 " Close tab
 ca qt tabclose
-
-" Show all tags instead of jumping into 1 like a fucking idiot
-"nnoremap <C-]> g<C-]>
 
 " Redo
 nnoremap U :redo<CR>
@@ -403,6 +422,8 @@ map <Leader> <Plug>(easymotion-prefix)
 let g:gutentags_define_advanced_commands = 1
 nnoremap <C-]> g<C-]>
 nnoremap g<C-]> <C-]>
+nnoremap <C-w><C-]> <C-w><C-]><C-w>L
+nnoremap <C-w>z <C-w>_ <C-w>\|
 
 
 " Easy Align
@@ -451,20 +472,6 @@ function! StatuslineGit()
   return strlen(l:branchname) > 0?'  '.l:branchname.' ':''
 endfunction
 
-set statusline=
-set statusline+=%#PmenuSel#
-set statusline+=%{StatuslineGit()}
-set statusline+=%#LineNr#
-set statusline+=\ %f
-set statusline+=%m
-set statusline+=%=
-set statusline+=\ %y
-set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
-set statusline+=\[%{&fileformat}\]
-set statusline+=\ %p%%
-set statusline+=\ %l:%c
-set statusline+=\
-
 if has('nvim')
     " Sane terminal bindings
     tnoremap <leader><esc> <esc>
@@ -496,3 +503,13 @@ elseif g:os == "Linux"
   nnoremap <leader>cfP :let @+ = expand("%:p")<CR>
 endif
 
+" Multiple cursor
+let g:multi_cursor_select_all_key = '<C-N>'
+" Disable ncm2 auto complete before triggering
+function! Multiple_cursors_before()
+  call ncm2#disable_for_buffer()
+endfunction
+" enable it back
+function! Multiple_cursors_after()
+  call ncm2#enable_for_buffer()
+endfunction

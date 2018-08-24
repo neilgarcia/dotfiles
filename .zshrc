@@ -1,6 +1,3 @@
-set -o vi
-set -o emacs
-
 fpath=(/usr/local/share/zsh-completions $fpath)
 
 autoload -U promptinit; promptinit
@@ -8,6 +5,7 @@ prompt pure
 
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:$PATH
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 # Rbenv
 export PATH="$HOME/.rbenv/bin:$PATH"
@@ -23,7 +21,7 @@ compinit
 # End of lines added by compinstall
 #
 
-export EDITOR='vim'
+export EDITOR='nvim'
 
 alias vim='nvim'
 alias ss='mux start serviceseeking && mux start elasticredis'
@@ -61,6 +59,17 @@ zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 bindkey "^[[A" up-line-or-beginning-search # Up
 bindkey "^[[B" down-line-or-beginning-search # Down
+
+bindkey -e
+bindkey -r '^Q'
+bindkey -M viins '^A' beginning-of-line
+bindkey -M viins '^E' end-of-line
+bindkey -M viins '^B' backward-char
+bindkey -M viins '^D' delete-char-or-list
+bindkey -M viins '^F' forward-char
+bindkey -M viins '^K' kill-line
+bindkey -M viins '^T' transpose-chars
+bindkey -M viins '^Y' yank
 
 git-branch-current() {
   if ! command git rev-parse 2> /dev/null; then
