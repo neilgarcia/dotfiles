@@ -98,6 +98,8 @@ source ~/.bin/tmuxinator.zsh
 
 source ~/.fzf/functions.sh
 
+source $HOME/.zsh_alias
+
 join-lines() {
   local item
   while read item; do
