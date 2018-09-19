@@ -25,6 +25,7 @@ export EDITOR='nvim'
 
 alias vim='nvim'
 alias ss='mux start serviceseeking && mux start elasticredis'
+alias tmux='tmux -u'
 
 ## Command history configuration
 if [ -z "$HISTFILE" ]; then
@@ -50,8 +51,6 @@ setopt hist_ignore_space
 setopt hist_verify
 setopt inc_append_history
 setopt share_history # share command history data
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
@@ -118,3 +117,5 @@ bind-git-helper() {
 
 bind-git-helper f b t r y
 unset -f bind-git-helper
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

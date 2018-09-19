@@ -49,11 +49,12 @@ Plug 'tpope/vim-fugitive'
 Plug 'junegunn/gv.vim'
 "
 ""Language specific
-Plug 'tpope/gem-ctags'
-Plug 'tpope/vim-bundler'
+" Plug 'tpope/gem-ctags'
+" Plug 'tpope/vim-bundler'
 Plug 'vim-ruby/vim-ruby'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
+Plug 'slim-template/vim-slim'
 "
 "" Text object
 Plug 'kana/vim-textobj-function'
@@ -76,6 +77,7 @@ Plug 'Konfekt/FastFold'
 Plug 'AndrewRadev/linediff.vim'
 Plug 'ckarnell/history-traverse'
 Plug 'terryma/vim-multiple-cursors'
+Plug 'mattn/emmet-vim'
 call plug#end()
 
 let g:mapleader      = ' '
@@ -243,6 +245,9 @@ map <leader>nh :nohlsearch<CR>
 
 " Ctrl backspace deletes word
 inoremap <C-BS> <C-w>
+
+" Disable this shit
+map <S-k> <Nop>
 
 ""
 "" Theme
@@ -438,12 +443,14 @@ let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 0
 
 let g:ale_linters = {
-\  'jsx':        ['eslint'],
-\  'javascript': ['eslint'],
+\  'jsx':        ['flow', 'eslint'],
+\  'javascript': ['flow', 'eslint'],
 \  'ruby':       ['rubocop']
 \}
 let g:ale_fixers = {
-\  'ruby': ['rubocop']
+\  'ruby': ['rubocop'],
+\  'javascript': ['flow'],
+\  'jsx':        ['flow']
 \}
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '!'
@@ -466,6 +473,15 @@ let g:EasyMotion_smartcase = 1
 " JK motions: Line motions
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
+
+" Emmet
+" redefine trigger key
+let g:user_emmet_leader_key=','
+let g:user_emmet_settings = {
+\  'javascript.jsx' : {
+\      'extends' : 'jsx',
+\  },
+\}
 
 function! StatuslineGit()
   let l:branchname = GitBranch()
