@@ -1,4 +1,5 @@
 fpath=(/usr/local/share/zsh-completions $fpath)
+fpath+=('/home/neil/.npm-global/lib/node_modules/pure-prompt/functions')
 
 autoload -U promptinit; promptinit
 prompt pure
@@ -61,14 +62,14 @@ bindkey "^[[B" down-line-or-beginning-search # Down
 
 bindkey -e
 bindkey -r '^Q'
-bindkey -M viins '^A' beginning-of-line
-bindkey -M viins '^E' end-of-line
 bindkey -M viins '^B' backward-char
 bindkey -M viins '^D' delete-char-or-list
 bindkey -M viins '^F' forward-char
 bindkey -M viins '^K' kill-line
 bindkey -M viins '^T' transpose-chars
 bindkey -M viins '^Y' yank
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 git-branch-current() {
   if ! command git rev-parse 2> /dev/null; then
@@ -97,7 +98,9 @@ source ~/.bin/tmuxinator.zsh
 
 source ~/.fzf/functions.sh
 
-source $HOME/.zsh_alias
+if [ -f ~/.zsh_alias ]; then
+  source $HOME/.zsh_alias
+fi
 
 join-lines() {
   local item
@@ -117,5 +120,3 @@ bind-git-helper() {
 
 bind-git-helper f b t r y
 unset -f bind-git-helper
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
