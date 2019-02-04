@@ -5,23 +5,24 @@ scriptencoding utf-8
 " Get object name for syntax highlighting
 " echom synIDattr(synID(line('.'),col('.'),0),'name')
 Plug 'joshdick/onedark.vim'
-Plug 'morhetz/gruvbox'
 
 " Auto completion
 if has('nvim')
-  Plug 'ncm2/ncm2'
+  " Plug 'ncm2/ncm2'
   " ncm2 requires nvim-yarp
-  Plug 'roxma/nvim-yarp'
+  " Plug 'roxma/nvim-yarp'
+  " Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
 
   " " Completion
-  Plug 'ncm2/ncm2-tmux'
-  Plug 'ncm2/ncm2-path'
-  Plug 'ncm2/ncm2-tern',  {'do': 'npm install'}
-  Plug 'ncm2/ncm2-tagprefix'
-  Plug 'ncm2/ncm2-ultisnips'
-  Plug 'SirVer/ultisnips'
-  Plug 'ncm2/ncm2-bufword'
+  " Plug 'ncm2/ncm2-tmux'
+  " Plug 'ncm2/ncm2-path'
+  " Plug 'ncm2/ncm2-tern',  {'do': 'npm install'}
+  " Plug 'ncm2/ncm2-tagprefix'
+  " Plug 'ncm2/ncm2-ultisnips'
+  " Plug 'ncm2/ncm2-bufword'
+
   " Snippets are separated from the engine. Add this if you want them:
+  Plug 'SirVer/ultisnips'
   Plug 'honza/vim-snippets'
   Plug 'neilgarcia/vim-react-snippets'
 endif
@@ -40,6 +41,7 @@ Plug 'scrooloose/nerdtree'
 
 " Tag generation
 Plug 'ludovicchabant/vim-gutentags'
+" Plug 'skywind3000/gutentags_plus'
 
 " Linting
 Plug 'w0rp/ale'
@@ -76,8 +78,8 @@ Plug 'junegunn/vim-easy-align'
 Plug 'Konfekt/FastFold'
 Plug 'AndrewRadev/linediff.vim'
 Plug 'ckarnell/history-traverse'
-Plug 'terryma/vim-multiple-cursors'
 Plug 'mattn/emmet-vim'
+" Plug 'mhinz/vim-startify'
 call plug#end()
 
 let g:mapleader      = ' '
@@ -170,7 +172,7 @@ set statusline+=%m
 set statusline+=%=
 set statusline+=\ %y
 set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
-set statusline+=\[%{&fileformat}\]
+set statusline+=\[%{&fileformat}]
 set statusline+=\ %p%%
 set statusline+=\ %l:%c
 set statusline+=\
@@ -192,7 +194,7 @@ augroup autocommands
   autocmd FileType qf nnoremap <buffer> <Esc> :cclose<CR>
 
   " enable ncm2 for all buffer
-  autocmd BufEnter * call ncm2#enable_for_buffer()
+  " autocmd BufEnter * call ncm2#enable_for_buffer()
 augroup END
 
 ""
@@ -284,13 +286,13 @@ set completeopt=noinsert,menuone,noselect
 set shortmess+=c
 
 " ncm2
-let g:ncm2#popup_delay = 10
-let g:endwise_no_mappings = 1 " Conflict
-let g:ncm2#matcher = 'abbrfuzzy'
-let g:ncm2#sorter = 'abbrfuzzy'
+" let g:ncm2#popup_delay = 10
+" let g:endwise_no_mappings = 1 " Conflict
+" let g:ncm2#matcher = 'abbrfuzzy'
+" let g:ncm2#sorter = 'abbrfuzzy'
 
-imap <C-X><CR>   <CR><Plug>AlwaysEnd
-imap <expr> <CR> (pumvisible() ? "\<C-Y>\<CR>\<Plug>DiscretionaryEnd" : "\<CR>\<Plug>DiscretionaryEnd")
+" imap <C-X><CR>   <CR><Plug>AlwaysEnd
+" imap <expr> <CR> (pumvisible() ? "\<C-Y>\<CR>\<Plug>DiscretionaryEnd" : "\<CR>\<Plug>DiscretionaryEnd")
 
 " c-j c-k for moving in snippet
 let g:UltiSnipsRemoveSelectModeMappings = 0   " assuming your using vim-plug: https://github.com/junegunn/vim-plug
@@ -313,6 +315,9 @@ map <leader>a :GrepperRg<Space>
 " Quickfix Window
 nmap <leader>qf <Plug>QfCtoggle
 let g:qf_mapping_ack_style = 1
+
+" List window
+nmap <leader>ql <Plug>QfLtoggle
 
 " Nerdtree
 nnoremap <silent> <leader>e :NERDTreeFind<CR>
@@ -449,8 +454,8 @@ let g:ale_linters = {
 \}
 let g:ale_fixers = {
 \  'ruby': ['rubocop'],
-\  'javascript': ['flow'],
-\  'jsx':        ['flow']
+\  'javascript': ['eslint'],
+\  'jsx':        ['eslint']
 \}
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '!'
@@ -519,13 +524,13 @@ elseif g:os == "Linux"
   nnoremap <leader>cfP :let @+ = expand("%:p")<CR>
 endif
 
-" Multiple cursor
-let g:multi_cursor_select_all_key = '<C-N>'
-" Disable ncm2 auto complete before triggering
-function! Multiple_cursors_before()
-  call ncm2#disable_for_buffer()
-endfunction
-" enable it back
-function! Multiple_cursors_after()
-  call ncm2#enable_for_buffer()
+" Simple re-format for minified Javascript
+command! UnMinify call UnMinify()
+function! UnMinify()
+    %s/{\ze[^\r\n]/{\r/g
+    %s/){/) {/g
+    %s/};\?\ze[^\r\n]/\0\r/g
+    %s/;\ze[^\r\n]/;\r/g
+    %s/[^\s]\zs[=&|]\+\ze[^\s]/ \0 /g
+    normal ggVG=
 endfunction

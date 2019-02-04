@@ -1,12 +1,24 @@
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
 fpath=(/usr/local/share/zsh-completions $fpath)
 fpath+=('/home/neil/.npm-global/lib/node_modules/pure-prompt/functions')
 
 autoload -U promptinit; promptinit
 prompt pure
+#
+# Setting path for java_home
+export JAVA_HOME=$(/usr/libexec/java_home -v '1.8*')
+export ANDROID_HOME=/Users/neil/Library/Android/sdk
+export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$PATH
 
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:$PATH
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+# Gtags
+export GTAGSCONF=/usr/local/share/gtags/gtags.conf
+export GTAGSLABEL=new-ctags
 
 # Rbenv
 export PATH="$HOME/.rbenv/bin:$PATH"
@@ -26,7 +38,7 @@ export EDITOR='nvim'
 
 alias vim='nvim'
 alias ss='mux start serviceseeking && mux start elasticredis'
-alias tmux='tmux -u'
+# alias tmux='tmux -u'
 
 ## Command history configuration
 if [ -z "$HISTFILE" ]; then
@@ -53,12 +65,11 @@ setopt hist_verify
 setopt inc_append_history
 setopt share_history # share command history data
 
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search # Up
-bindkey "^[[B" down-line-or-beginning-search # Down
+autoload -U history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "^[[A" history-beginning-search-backward-end
+bindkey "^[[B" history-beginning-search-forward-end
 
 bindkey -e
 bindkey -r '^Q'
@@ -86,7 +97,6 @@ git-branch-current() {
     return 1
   fi
 }
-
 
 alias gst='git status'
 alias gp='git push origin "$(git-branch-current 2> /dev/null)"'
