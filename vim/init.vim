@@ -4,6 +4,7 @@ scriptencoding utf-8
 " Theme
 " Get object name for syntax highlighting
 " echom synIDattr(synID(line('.'),col('.'),0),'name')
+Plug 'arcticicestudio/nord-vim'
 Plug 'joshdick/onedark.vim'
 
 " Auto completion
@@ -22,9 +23,9 @@ if has('nvim')
   " Plug 'ncm2/ncm2-bufword'
 
   " Snippets are separated from the engine. Add this if you want them:
-  Plug 'SirVer/ultisnips'
-  Plug 'honza/vim-snippets'
-  Plug 'neilgarcia/vim-react-snippets'
+  " Plug 'SirVer/ultisnips'
+  " Plug 'honza/vim-snippets'
+  " Plug 'neilgarcia/vim-react-snippets'
 endif
 
 " FZF
@@ -94,7 +95,7 @@ map <leader>so :source $MYVIMRC<CR>
 
 
 " Basic Configs
-set re=1
+set re=2
 set hidden
 set number            " Show line number
 set ruler
@@ -103,6 +104,7 @@ set ruler
 set lazyredraw
 set autoread
 set timeoutlen=500    " Dont wait too long for the next key press (useful for ambigous leader commands)
+set noeb vb t_vb=
 
 ""
 "" Undo history
@@ -186,7 +188,7 @@ augroup autocommands
   autocmd BufWritePost * :%s/\s\+$//e " strip whitespace on save
   autocmd! FileType fzf tnoremap <buffer> <Esc> <c-c>
   autocmd FileType gitcommit nnoremap <buffer> d :call GStatusTabDiff()<CR>
-  autocmd BufWinEnter * if empty(expand('<afile>'))|call fugitive#detect(getcwd())|endif
+  autocmd BufWinEnter * if empty(expand('<afile>'))|call FugitiveDetect(getcwd())|endif
   autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
   " autocmd BufNewFile,BufRead *.jsx set filetype=javascript
   " autocmd BufNewFile,BufRead *.js  set filetype=javascript.jsx
@@ -267,7 +269,7 @@ if (has('termguicolors'))
 endif
 
 set background=dark           " Enable dark background
-colorscheme onedark "Set the colorscheme
+colorscheme nord "Set the colorscheme
 syntax sync minlines=256
 set foldmethod=manual
 
@@ -295,10 +297,10 @@ set shortmess+=c
 " imap <expr> <CR> (pumvisible() ? "\<C-Y>\<CR>\<Plug>DiscretionaryEnd" : "\<CR>\<Plug>DiscretionaryEnd")
 
 " c-j c-k for moving in snippet
-let g:UltiSnipsRemoveSelectModeMappings = 0   " assuming your using vim-plug: https://github.com/junegunn/vim-plug
-let g:UltiSnipsExpandTrigger = '<Tab>'
-let g:UltiSnipsJumpForwardTrigger='<Tab>'
-let g:UltiSnipsJumpBackwardTrigger='<S-Tab>'
+" let g:UltiSnipsRemoveSelectModeMappings = 0   " assuming your using vim-plug: https://github.com/junegunn/vim-plug
+" let g:UltiSnipsExpandTrigger = '<Tab>'
+" let g:UltiSnipsJumpForwardTrigger='<Tab>'
+" let g:UltiSnipsJumpBackwardTrigger='<S-Tab>'
 
 " Grepper
 runtime plugin/grepper.vim
@@ -332,11 +334,11 @@ map <leader>Q :bufdo Sayonara!<CR>
 
 " make fugitive work on empty buffers
 
-nmap <leader>gb :Gblame<CR>
+nmap <leader>gb :Git blame<CR>
 nmap <leader>gc :Gcommit<CR>
 nmap <leader>gd :Gdiff<CR>
 nmap <leader>gg :Ggrep
-nmap <leader>gl :Glog<CR>
+nmap <leader>gl :Gclog<CR>
 nmap <leader>gw :Gbrowse<CR>
 
 " Get current branch
@@ -402,6 +404,9 @@ endfunction
 let $FZF_DEFAULT_COMMAND = "fd . --type file --hidden --no-ignore --exclude '{.git,doc*/,**/node_modules,vendor,build,tmp,*.sty}'"
 
 let g:fzf_buffers_jump = 1  " [Buffers] Jump to the existing window if possible
+" Empty value to disable preview window altogether
+" let g:fzf_preview_window = []
+let g:fzf_layout = { 'down': '~35%' }
 
 nnoremap <silent> <C-P> :exe 'Files ' . <SID>git_root()<CR>
 nnoremap <leader>b :Buffers<CR>
